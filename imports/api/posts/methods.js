@@ -3,6 +3,7 @@ import {Posts} from '/db';
 
 Meteor.methods({
     'post.create'(post) {
+
         Posts.insert({
             title:post.title,
             description:post.description,

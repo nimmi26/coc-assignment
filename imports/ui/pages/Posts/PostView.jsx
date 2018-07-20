@@ -11,7 +11,7 @@ import SingleComment from './SingleComment.jsx';
 
 class PostView extends React.Component {
 
-	constructor(props) {
+  constructor(props) {
     super();
     //This meteor call increment the post view by one
     Meteor.call('post.viewincrement',props.match.params._id);
@@ -51,11 +51,11 @@ class PostView extends React.Component {
     });    
   };
 
-	render() {
+  render() {
     
-		const {posts, comments,history} = this.props;
+    const {posts, comments,history} = this.props;
     let button = "";
-		if (!posts ) {
+    if (!posts ) {
       return <div>Loading....</div>
     }
   
@@ -63,19 +63,19 @@ class PostView extends React.Component {
     if(Meteor.userId() === posts.userId){
       button = <button onClick={this.deletepost.bind(this)}>Delete Post </button>
     }
-		return (
+    return (
       <div >
         <div>
-        	<p>Post id: {posts._id} </p>
+          <p>Post id: {posts._id} </p>
         </div>
         <div>
           <p> Post Description: {posts.description} </p>
         </div>
         <div>
-        	<p>Post title: {posts.title}</p>
+          <p>Post title: {posts.title}</p>
         </div>
         <div>
-        	<p>Post Category: {posts.category}</p>
+          <p>Post Category: {posts.category}</p>
         </div>
         <div>
           <p>Total Views: {posts.views}</p>
@@ -111,8 +111,8 @@ class PostView extends React.Component {
         }}> Back to post
         </button>
       </div>
-  	)
-	}
+    )
+  }
 }
 export default withTracker(props => {
     const handle = Meteor.subscribe('posts');
