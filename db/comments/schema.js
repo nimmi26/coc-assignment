@@ -34,8 +34,11 @@ export default new SimplSchema({
     },
     createdAt: {
     	type: Date,
+        optional: true,
     	autoValue: function(){
-    		return new Date();
+            if (this.isInsert ) {
+                return new Date();
+            }         
     	}
     }
 });

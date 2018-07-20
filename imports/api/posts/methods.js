@@ -9,7 +9,6 @@ Meteor.methods({
             category:post.category,
             userId:Meteor.userId()
         })
-        console.log(post);
     },
 
     'post.list' () {

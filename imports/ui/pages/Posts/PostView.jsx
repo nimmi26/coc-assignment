@@ -21,17 +21,20 @@ class PostView extends React.Component {
 
   //Call meteod for delete post
   deletepost(){
-    /*Fisrt delte comment related to post if there any*/
-    Meteor.call('comments.delete',this.props.posts._id,(err,res)=>{
-    /*Delete post after all comment deleted*/
-        Meteor.call('post.remove',this.props.posts._id,(err,res)=>{
-          if(res){
-            alert('Post Delete');
-            return this.props.history.push('/posts');
-          }
-        });
-   
-    });
+    let result = confirm("Want to delete?");
+    if(result){
+      /*Fisrt delte comment related to post if there any*/
+      Meteor.call('comments.delete',this.props.posts._id,(err,res)=>{
+      /*Delete post after all comment deleted*/
+          Meteor.call('post.remove',this.props.posts._id,(err,res)=>{
+            if(res){
+              alert('Post Delete');
+              return this.props.history.push('/posts');
+            }
+          });
+     
+      });
+    }
   }
 
   //Handel comment submit for post
@@ -44,18 +47,18 @@ class PostView extends React.Component {
       if (err) {
           return alert(err)
       }
-      alert('Comment added!')
+      
     });    
   };
 
 	render() {
-    console.log(Meteor.userId())
+    
 		const {posts, comments,history} = this.props;
     let button = "";
 		if (!posts ) {
       return <div>Loading....</div>
     }
-    console.log(posts.userId)
+  
     /*Check if loggedin user is owner of post */
     if(Meteor.userId() === posts.userId){
       button = <button onClick={this.deletepost.bind(this)}>Delete Post </button>
@@ -78,16 +81,8 @@ class PostView extends React.Component {
           <p>Total Views: {posts.views}</p>
         </div>
         <div>
-      {/*Added show comment section for each post */}
-        <p>Comments: {comments.length>0?comments.length:0}</p>
-        { comments.length>0 ?
-          comments.map((res) =>{
-            /*new component for post comment and ccommented by*/
-            return <SingleComment key={res._id} postOwner={posts.userId} postId={posts._id} comment={res}/>
-          }) : <div>No comments</div>
-        }
-        </div>
-      {/*Added comment functionality for post */}
+
+        {/*Added comment functionality for post */}
 
         <div  className="comment">
           <AutoForm onSubmit={this.commentSubmit.bind(this)} schema={CommentSchema}>
@@ -97,6 +92,17 @@ class PostView extends React.Component {
         </div>
         <br />
       {/*End of comment form */}
+
+      {/*Added show comment section for each post */}
+        <p>Total Comments: {comments.length>0?comments.length:0}</p>
+        { comments.length>0 ?
+          comments.map((res) =>{
+            /*new component for post comment and ccommented by*/
+            return <SingleComment key={res._id} postOwner={posts.userId} postId={posts._id} comment={res}/>
+          }) : <div>No comments</div>
+        }
+        </div>
+      
 
       {/*Add post delete button*/}
         {button}

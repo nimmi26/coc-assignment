@@ -13,7 +13,7 @@ class SingleComment extends Component{
 		if(!user){
 			return <div>Loding</div>
 		}
-		//console.log(user[0].emails[0])
+		
 		return (
 			<div>
 				<p>Comment Text: {this.props.comment.comment}</p>
