@@ -1,4 +1,5 @@
 import React from 'react';
+import TotalComments from './TotalComments.jsx';
 export default class PostList extends React.Component {
     constructor() {
         super();
@@ -55,6 +56,7 @@ export default class PostList extends React.Component {
                                 <a href={"/posts/view-post/" + post._id } >
                                     <p>Post title: {post.title}, Post Description: {post.description} </p>
                                 </a>
+                                <TotalComments key={post._id} postid={post._id} totalviews={post.views} />
                                 <button onClick={() => {
                                     history.push("/posts/edit/" + post._id)
                                 }}> Edit post

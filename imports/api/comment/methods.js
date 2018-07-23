@@ -1,5 +1,7 @@
 import {Meteor} from 'meteor/meteor'
 import  { Comments }  from '/db';
+import { Posts } from '/db';
+
 Meteor.methods({
 
 	/*Methods for create method for post comment */
@@ -21,5 +23,15 @@ Meteor.methods({
 	/*Method for delete comment when post deleted*/
 	'comments.delete'(postid){;
 		return Comments.remove({postId:postid})
+	},
+
+	'comment.fetch'(){
+			let query = Posts.createQuery({	
+				posts: {
+	        title: 1,
+	        
+	      }
+			}).fetch();
+			return query;
 	}
 });
