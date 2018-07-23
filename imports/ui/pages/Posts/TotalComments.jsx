@@ -5,13 +5,13 @@ class TotalComments extends Component{
 	render() {
 		const { comments,history} = this.props;
 		if(!comments){
-			return <div>hi</div>
+			return <p>Total Viwes: {this.props.totalviews}</p>
 		}
-
+		
 		return (
 			<div>
 				<p>Total Viwes: {this.props.totalviews}</p>
-				<p>Total Comments: {comments.length}</p>
+				<p>Total Comments: {comments}</p>
 			</div>
 		);
 	}
@@ -20,7 +20,7 @@ export default withTracker(props => {
 	console.log(props)
     const handleComment = Meteor.subscribe('comments');
     return {
-      comments: Comments.find({postId:props.postid}).fetch(),
+      comments: Comments.find({postId:props.postid}).count(),
       ...props
     };
 })(TotalComments);
