@@ -1,17 +1,21 @@
 import {Posts} from '/db';
 import {Comments} from '/db';
+
+/*Creating links for post to user each post has an author*/
 Posts.addLinks({
   'author': {
     type: 'one',
     collection: Meteor.users,
-    field: 'authorId',
+    field: 'userId',
   }
 })
 
+/*Inverse link to comments collection post  
+comments must have a post */
 Posts.addLinks({
 	'comments': {
-    type: 'many',
     collection: Comments,
-    field: 'commentIds',
+    inversedBy: 'posts',
+    autoremove: true,
   }
 })

@@ -17,10 +17,9 @@ class TotalComments extends Component{
 	}
 }
 export default withTracker(props => {
-	console.log(props)
-    const handleComment = Meteor.subscribe('comments');
-    return {
-      comments: Comments.find({postId:props.postid}).count(),
-      ...props
-    };
+  const handleComment = Meteor.subscribe('comments');
+  return {
+    comments: Comments.find({postId:props.postid}).count(),
+    ...props
+  };
 })(TotalComments);

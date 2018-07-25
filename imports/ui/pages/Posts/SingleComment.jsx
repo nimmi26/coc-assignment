@@ -3,36 +3,35 @@ New Page for each comment and user for each post
 */
 
 import React,{ Component } from 'react';
-import {withTracker} from 'meteor/react-meteor-data';
-import CommentUser from './CommentUser.jsx';
+/* Data coming from props so no use of tarcker component
+import {withTracker} from 'meteor/react-meteor-data';*/
+/*
+This two files is no loner used because of we can get all data in one go 
+
 import {Users} from '/db';
-class SingleComment extends Component{
-	render() {
-		const {user, history} = this.props;
-		
-		if(!user){
-			return <div>Loding</div>
-		}
-		
+
+*/
+
+import CommentUser from './CommentUser.jsx';
+export default class SingleComment extends Component{
+	render() {	
 		return (
 			<div>
-				<p>Comment Text: {this.props.comment.comment}</p>
-				{ user.length>0 ?
-          user.map((res) =>{
-            return <CommentUser key={res._id} userDetail={res} commentId={this.props.comment._id} postId={this.props.postId} postOwner={this.props.postOwner} />
-          }) : <div>No comments</div>
-        }
-        <hr/>
+
+			{(this.props.data)?(this.props.data).map((res)=>{
+				return (
+					<div key={res._id}>
+					<hr />
+						<p>Comment Text: {res.comment}</p>
+						{
+							 <CommentUser userDetail={res.commentAuthor} commentId={res._id}/>
+						}
+					
+					</div>
+				)
+			}):""}
 			</div>
 		);
 	}
+
 }
-export default withTracker(props => {
-	let userId = props.comment.userId;
-	const handle = Meteor.subscribe('userProfile',userId);
-  return {
-    loading: !handle.ready(),
-    user: Meteor.users.find({_id:userId}).fetch(),
-    ...props
-  };
-})(SingleComment);

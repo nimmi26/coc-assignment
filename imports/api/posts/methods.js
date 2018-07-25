@@ -16,6 +16,20 @@ Meteor.methods({
         return Posts.find({},{sort:{createdAt:-1}}).fetch();
     },
 
+    //Rewrite post list query using grapher query
+
+    'postListUsingGrapher' () {
+        return Posts.createQuery({
+            //$filters: {_id: postId},
+            title: 1,
+            createdAt: 1,
+            views: 1,
+            description: 1,
+            category: 1,
+            userId: 1,
+        }).fetch();
+    },
+
     'post.edit' (_id, post) {
         Posts.update(_id, {
             $set: {
@@ -39,5 +53,31 @@ Meteor.methods({
         Posts.update(_id, {
             $inc:{views: 1} 
         });
+    },
+
+    'getPost'(postId){
+        let post = Posts.createQuery({
+            $filters: {_id: postId},
+            title: 1,
+            createdAt: 1,
+            views: 1,
+            description: 1,
+            category: 1,
+            userId: 1,
+            author: {
+                'emails.address': 1
+            },
+            comments: {
+                comment: 1,
+                createdAt: 1,
+                commentAuthor: {
+                    'emails.address': 1
+                },
+            }
+        });
+
+        return post.fetchOne();
     }
+
+
 });

@@ -9,7 +9,11 @@ export default class PostEdit extends React.Component {
     }
 
     componentDidMount() {
+        /*Replacing this simple post get query with grapher query 
         Meteor.call('post.get', this.props.match.params._id, (err, post) => {
+            this.setState({post});
+        });*/
+        Meteor.call('getPost', this.props.match.params._id, (err, post) => {
             this.setState({post});
         });
     }

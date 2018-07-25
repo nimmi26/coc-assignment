@@ -8,7 +8,7 @@ import {Comments} from '/db';
 import {AutoForm, AutoField, HiddenField } from 'uniforms-unstyled';
 import CommentSchema from '/db/comments/schema';
 import SingleComment from './SingleComment.jsx';
-
+import { ReactiveVar } from 'meteor/reactive-var'
 class PostView extends React.Component {
 
   constructor(props) {
@@ -23,16 +23,16 @@ class PostView extends React.Component {
   deletepost(){
     let result = confirm("Want to delete?");
     if(result){
-      /*Fisrt delte comment related to post if there any*/
-      Meteor.call('comments.delete',this.props.posts._id,(err,res)=>{
-      /*Delete post after all comment deleted*/
-          Meteor.call('post.remove',this.props.posts._id,(err,res)=>{
-            if(res){
-              alert('Post Delete');
-              return this.props.history.push('/posts');
-            }
-          });
-     
+      /* Remove comment delete functionality because start using autoremovel for deletion
+         Meteor.call('comments.delete',postid,(err,res)=>{});
+        /*Delete post after all comment deleted
+      */
+
+      Meteor.call('post.remove',postid,(err,res)=>{
+        if(res){
+          alert('Post Delete');
+          return this.props.history.push('/posts');
+        }
       });
     }
   }
@@ -43,7 +43,7 @@ class PostView extends React.Component {
     if(!Meteor.userId()){
       return this.props.history.push('/login');
     }
-    Meteor.call('comment.create', post, this.props.posts._id,(err) => {
+    Meteor.call('comment.create', post, this.props.grapherPost._id,(err) => {
       if (err) {
           return alert(err)
       }
@@ -53,35 +53,43 @@ class PostView extends React.Component {
 
   render() {
     
-    const {posts, comments,history} = this.props;
+    const {history,grapherPost} = this.props;
     let button = "";
-    if (!posts ) {
+    if (!grapherPost) {
       return <div>Loading....</div>
     }
-  
+      
     /*Check if loggedin user is owner of post */
-    if(Meteor.userId() === posts.userId){
+    if(Meteor.userId() === grapherPost.userId){
       button = <button onClick={this.deletepost.bind(this)}>Delete Post </button>
     }
     return (
       <div >
         <div>
-          <p>Post id: {posts._id} </p>
+          <p>Post id: {grapherPost._id} </p>
         </div>
         <div>
-          <p> Post Description: {posts.description} </p>
+          <p> Post Description: {grapherPost.description} </p>
         </div>
         <div>
-          <p>Post title: {posts.title}</p>
+          <p>Post title: {grapherPost.title}</p>
         </div>
         <div>
-          <p>Post Category: {posts.category}</p>
+          <p>Post Category: {grapherPost.category}</p>
         </div>
         <div>
-          <p>Total Views: {posts.views}</p>
+          <p>Total Views: {grapherPost.views}</p>
+        </div>
+        <div>
+          <p>Post Author: {(grapherPost.author)?grapherPost.author.emails[0].address:""}</p>
         </div>
         <div>
 
+        {/*Added show comment section for each post */}
+        <div>
+          <p>Total Comments: {((grapherPost.comments))?_.size(grapherPost.comments):0}</p>
+          
+        </div>
         {/*Added comment functionality for post */}
 
         <div  className="comment">
@@ -91,18 +99,11 @@ class PostView extends React.Component {
           </AutoForm>
         </div>
         <br />
+        
       {/*End of comment form */}
-
-      {/*Added show comment section for each post */}
-        <p>Total Comments: {comments.length>0?comments.length:0}</p>
-        { comments.length>0 ?
-          comments.map((res) =>{
-            /*new component for post comment and ccommented by*/
-            return <SingleComment key={res._id} postOwner={posts.userId} postId={posts._id} comment={res}/>
-          }) : <div>No comments</div>
-        }
-        </div>
-      
+      </div>
+      { grapherPost.comments?  <SingleComment data={grapherPost.comments}/>:<div>No Comments</div>
+          } 
 
       {/*Add post delete button*/}
         {button}
@@ -114,14 +115,16 @@ class PostView extends React.Component {
     )
   }
 }
+/*Define reactive variable to store grapher query result*/
+const postGrapher = new ReactiveVar([]);
 export default withTracker(props => {
-    const handle = Meteor.subscribe('posts');
-    const handleComment = Meteor.subscribe('comments');
-    return {
-      loading: !handle.ready(),
-      loadingComment: !handleComment.ready(),
-      posts: Posts.findOne({_id:props.match.params._id}),
-      comments: Comments.find({postId:props.match.params._id}).fetch(),
-      ...props
-    };
+
+  Meteor.call('getPost',props.match.params._id,(err,res)=>{
+    postGrapher.set(res)
+  })
+  //Query using grapher
+  return {
+    grapherPost: postGrapher.get(),
+    ...props
+  };
 })(PostView);

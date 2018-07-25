@@ -11,29 +11,49 @@ export default class PostList extends React.Component {
         /*Fisrt delte comment related to post if there any*/
         let result = confirm("Want to delete?");
         if(result){
-            Meteor.call('comments.delete',postid,(err,res)=>{
-            /*Delete post after all comment deleted*/
-                Meteor.call('post.remove',postid,(err,res)=>{
-                  if(res){
-                    alert('Post Delete');
-                    return this.props.history.push('/posts');
-                  }
-                });
+            /* Remove comment delete functionality because start using autoremovel for deletion
+
+             Meteor.call('comments.delete',postid,(err,res)=>{})
+            /*Delete post after all comment deleted
+
+            */
+
+            Meteor.call('post.remove',postid,(err,res)=>{
+              if(res){
+                alert('Post Delete');
+                return this.props.history.push('/posts');
+              }
             });
         }
-        
     }
     componentDidMount() {
-       Meteor.call('post.list', (err, posts) => {
+       /*
+        Changing this code with grapher query
+
+
+        Meteor.call('post.list', (err, posts) => {
             this.setState({posts});
-        });        
+        }); */  
+
+        Meteor.call('postListUsingGrapher', (err, posts) => {
+            this.setState({posts});
+        });     
     }
 
     componentDidUpdate(prevProps, prevState) {
         if(prevProps != this.props) {
+           /*
+            Changing this code with grapher query
+
+
             Meteor.call('post.list', (err, posts) => {
                 this.setState({posts});
-            });
+            });*/
+
+
+            Meteor.call('postListUsingGrapher', (err, posts) => {
+                this.setState({posts});
+            }); 
         }
     }
 
