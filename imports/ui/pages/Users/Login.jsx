@@ -1,6 +1,7 @@
 import React from 'react';
 import {AutoForm, AutoField, ErrorsField} from 'uniforms-unstyled';
 import SimpleSchema from 'simpl-schema';
+import UserServices from '../../../api/users/services/UserServices.js';
 
 export default class Login extends React.Component {
     constructor() {
@@ -9,12 +10,19 @@ export default class Login extends React.Component {
 
     handleLogin = (data) => {
         const {email, password} = data;
-        Meteor.loginWithPassword(email, password, (err) => {
+        let loginUser = new Promise((resolve,reject) => {
+            let loginResult = UserServices.loginUser(email,password);
+            resolve(loginResult);
+        })
+        loginUser.then((loginResult)=>{
+            this.props.history.push('/posts');
+        })
+        /*Meteor.loginWithPassword(email, password, (err) => {
             if (!err) {
                 return this.props.history.push('/posts');
             }
             alert(err.reason);
-        });
+        });*/
     };
 
     render() {
@@ -23,8 +31,7 @@ export default class Login extends React.Component {
                 <AutoForm onSubmit={this.handleLogin} schema={LoginSchema}>
                     <ErrorsField/>
 
-                    <AutoField name="email"
-                               placeholder="Email"/>
+                    <AutoField name="email" placeholder="Email"/>
 
                     <AutoField name="password" type="password" placeholder="Password"/>
 

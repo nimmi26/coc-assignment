@@ -1,25 +1,26 @@
 import React, {Component} from 'react';
 import {AutoForm, AutoField, ErrorsField} from 'uniforms-unstyled';
 import SimpleSchema from 'simpl-schema';
-
+import UserServices from '../../../api/users/services/UserServices.js';
 export default class Register extends Component {
     constructor() {
         super();
     }
 
     onSubmit = (data) => {
-        Meteor.call('user.register', data, (err) => {
-            if (!err) {
-                Meteor.loginWithPassword(data.email, data.password, (err) => {
-                    if (err) {
-                        return alert(err.reason);
-                    }
-                    this.props.history.push('/posts');
-                });
-            } else {
-                return alert(err.reason)
-            }
+        let userCreatePromise = new Promise((resolve, reject) => {
+            let userResult   = UserServices.createUser(data);
+            resolve(userResult);
         });
+        userCreatePromise.then((userResult)=>{
+            let loginUser = new Promise((resolve,reject) => {
+                let loginResult = UserServices.loginUser(data.email,data.password);
+                resolve(loginResult);
+            })
+            loginUser.then((loginResult)=>{
+                this.props.history.push('/posts');
+            })
+        })
     };
 
 

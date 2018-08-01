@@ -1,25 +1,26 @@
 import React from 'react';
 import {AutoForm, AutoField, LongTextField, SelectField} from 'uniforms-unstyled';
 import PostSchema from '/db/posts/schema';
-
+import PostServices from '/imports/api/posts/services/PostServices';
 export default class PostCreate extends React.Component {
     constructor() {
         super();
         this.handelSubmit = this.handelSubmit.bind(this)
     }
 
-    handelSubmit = (post) => {
+    handelSubmit = (posts) => {
         if(!Meteor.userId()){
             return this.props.history.push('/login');
         }else{
-            Meteor.call('post.create', post, (err) => {
-                if (err) {
-                    return console.log(err)
-                }
-                alert('Post added!')
+            let postCreatePromise = new Promise((resolve, reject) => {
+                let res = PostServices.createPost(posts);
+                resolve(res)
             });
+            postCreatePromise.then((res)=>{
+                alert('Post Added');
+                return this.props.history.push('/posts');
+            })
         }
-        
     };
 
     render() {

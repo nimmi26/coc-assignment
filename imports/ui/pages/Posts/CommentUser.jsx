@@ -6,22 +6,21 @@ Deleting this file beacuse no need of this file
 */
 
 import React,{ Component } from 'react';
+import CommentServices from '/imports/api/comment/services/CommentServices';
 export default class CommentUser extends Component{
 	constructor(props) {
-    super();   
-    this.deleteComment = this.deleteComment.bind(this)
-  }
-  deleteComment(){
-  	/*Delete comment*/
-  	let result = confirm("Want to delete?");
-    if(result){
-			Meteor.call('comment.delete',this.props.commentId,(err,res)=>{})
+    	super();   
+    	this.deleteComment = this.deleteComment.bind(this)
+  	}
+  	deleteComment(){
+  		/*Delete comment*/
+  		let result = confirm("Want to delete?");
+    	if(result){
+    		CommentServices.deleteComment(this.props.commentId);
 		}
-  }
+  	}
 	render() {
-	
 		let button = "";
-	
 		if(this.props.userDetail._id === Meteor.userId() || Meteor.userId() === this.props.postOwner ){
 			button = <button onClick={this.deleteComment.bind(this)}>Delete Comment</button>
 		}

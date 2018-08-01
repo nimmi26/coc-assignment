@@ -3,13 +3,8 @@ import {Posts} from '/db';
 
 Meteor.methods({
     'post.create'(post) {
-
-        Posts.insert({
-            title:post.title,
-            description:post.description,
-            category:post.category,
-            userId:Meteor.userId()
-        })
+        post.userId = Meteor.userId();
+        return Posts.insert(post)
     },
 
     'post.list' () {
@@ -31,13 +26,15 @@ Meteor.methods({
     },
 
     'post.edit' (_id, post) {
-        Posts.update(_id, {
-            $set: {
-                title: post.title,
-                description: post.description,
-                category: post.category
-            }
-        });
+        return (
+            Posts.update(_id, {
+                $set: {
+                    title: post.title,
+                    description: post.description,
+                    category: post.category
+                }
+            })
+        )
     },
 
     'post.remove' (_id){

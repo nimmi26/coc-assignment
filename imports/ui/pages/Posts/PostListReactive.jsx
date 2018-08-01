@@ -1,7 +1,7 @@
 import React from 'react';
 import {withTracker} from 'meteor/react-meteor-data';
 import {Posts} from '/db';
-
+import PostServices from '/imports/api/posts/services/PostServices';
 class PostListReactive extends React.Component {
     constructor() {
         super();
@@ -35,13 +35,17 @@ class PostListReactive extends React.Component {
     }
 }
 
-
+const postGrapher = new ReactiveVar([]);
 export default withTracker(props => {
-    const handle = Meteor.subscribe('posts');
-
+    let promise = new Promise((resolve, reject) => {
+    let posts =  PostServices.getPost()
+        resolve(posts)
+    });
+    promise.then((posts)=>{
+        postGrapher.set(posts)
+    }) 
     return {
-        loading: !handle.ready(),
-        posts: Posts.find().fetch(),
+        posts: postGrapher.get(),
         ...props
     };
 })(PostListReactive);

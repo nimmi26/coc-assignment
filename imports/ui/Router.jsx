@@ -10,6 +10,7 @@ import PostView from './pages/Posts/PostView';
 import Register from './pages/Users/Register';
 import Login from './pages/Users/Login';
 import QueryTest from './pages/Posts/QueryTest';
+import Testing from './pages/Posts/Testing';
 export default () =>
     <App>
         <Route exact path="/" component={Home}/>
@@ -20,5 +21,5 @@ export default () =>
         <Route exact path="/posts/view-post/:_id" component={PostView} />
         <Route exact path="/register" component={Register} />
         <Route exact path="/login" component={Login} />
-        <Route exact path="/testing" component={QueryTest} />
+        <Route exact path="/testing" component={Testing} />
     </App>

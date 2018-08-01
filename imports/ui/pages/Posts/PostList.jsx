@@ -1,5 +1,6 @@
 import React from 'react';
 import TotalComments from './TotalComments.jsx';
+import PostServices from '/imports/api/posts/services/PostServices';
 export default class PostList extends React.Component {
     constructor() {
         super();
@@ -18,11 +19,23 @@ export default class PostList extends React.Component {
 
             */
 
-            Meteor.call('post.remove',postid,(err,res)=>{
+           /* Meteor.call('post.remove',postid,(err,res)=>{
               if(res){
                 alert('Post Delete');
                 return this.props.history.push('/posts');
               }
+            });*/
+
+            //Deleting post using service 
+            let promise = new Promise((resolve, reject) => {
+                let res =  PostServices.deletePost(postid)
+                resolve(res)
+            });
+            promise.then((res)=>{
+                if(res){
+                    alert('Post Deleted');
+                    return this.props.history.push('/posts');
+                }
             });
         }
     }
@@ -35,9 +48,20 @@ export default class PostList extends React.Component {
             this.setState({posts});
         }); */  
 
-        Meteor.call('postListUsingGrapher', (err, posts) => {
+        /*Meteor.call('postListUsingGrapher', (err, posts) => {
             this.setState({posts});
-        });     
+        }); */  
+
+
+        //Now getting post using services  
+        let promise = new Promise((resolve, reject) => {
+            let posts =  PostServices.getPost()
+            resolve(posts)
+        });
+        promise.then((posts)=>{
+            this.setState({posts});
+        });
+
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -51,9 +75,18 @@ export default class PostList extends React.Component {
             });*/
 
 
-            Meteor.call('postListUsingGrapher', (err, posts) => {
+            /*Meteor.call('postListUsingGrapher', (err, posts) => {
                 this.setState({posts});
-            }); 
+            });*/
+
+            //Now getting post using services  
+            let promise = new Promise((resolve, reject) => {
+                let posts =  PostServices.getPost()
+                resolve(posts)
+            });
+            promise.then((posts)=>{
+                this.setState({posts});
+            }) 
         }
     }
 
@@ -77,11 +110,8 @@ export default class PostList extends React.Component {
                                     <p>Post title: {post.title}, Post Description: {post.description} </p>
                                 </a>
                                 <TotalComments key={post._id} postid={post._id} totalviews={post.views} />
-                                <button onClick={() => {
-                                    history.push("/posts/edit/" + post._id)
-                                }}> Edit post
-                                </button>
-                                {(Meteor.userId()===post.userId)?<button onClick={() => this.deletepost(post._id)}>Delete</button>:""}
+                                
+                                {(Meteor.userId()===post.userId)?<div><button onClick={() =>{history.push("/posts/edit/" + post._id)}}>Edit</button><button onClick={() => this.deletepost(post._id)}>Delete</button></div>:""}
                             </div>
                         )
                     })}

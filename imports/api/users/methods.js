@@ -10,9 +10,11 @@ Meteor.methods({
                 'Email already taken');
         }
 
-        Accounts.createUser({
-            email: data.email,
-            password: data.password
-        });
+        return(
+            Accounts.createUser({
+                email: data.email,
+                password: data.password
+            })
+        )
     }
 });
