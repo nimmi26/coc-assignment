@@ -2,10 +2,10 @@
 
 
 import React from 'react';
+import {Meteor} from 'meteor/meteor';
+import { _ } from 'meteor/underscore';
 import {withTracker} from 'meteor/react-meteor-data';
-import {Posts} from '/db';
-import {Comments} from '/db';
-import {AutoForm, AutoField, HiddenField } from 'uniforms-unstyled';
+import {AutoForm, AutoField } from 'uniforms-unstyled';
 import CommentSchema from '/db/comments/schema';
 import SingleComment from './SingleComment.jsx';
 import { ReactiveVar } from 'meteor/reactive-var';
@@ -20,28 +20,20 @@ class PostView extends React.Component {
         PostServices.incrementViewsOfPost(props.match.params._id);
 
         this.commentSubmit = this.commentSubmit.bind(this);
-
-        this.deletepost = this.deletepost.bind(this);
+        this.backToPost = this.backToPost.bind(this);
+        this.DeletePost = this.DeletePost.bind(this);
+       
     }
 
-    //Call meteod for delete post
-    deletepost(postid){
-        let result = confirm("Want to delete?");
-        if(result){
-            /* Remove comment delete functionality because start using autoremovel for deletion
-            Meteor.call('comments.delete',postid,(err,res)=>{});
-            /*Delete post after all comment deleted
-            */
-
-           /* Meteor.call('post.remove',postid,(err,res)=>{
-                if(res){
-                    alert('Post Delete');
-                    return this.props.history.push('/posts');
-                }
-            });*/
+    backToPost(){
+        return this.props.history.push('/posts');
+    }
+    DeletePost(){
+        if(window.confirm("Want to delete?")){
             let promise = new Promise((resolve, reject) => {
-                let res =  PostServices.deletePost(postid)
-                resolve(res)
+                let res =  PostServices.deletePost(this.props.grapherPost._id);
+                resolve(res);
+                reject();
             });
             promise.then((res)=>{
                 if(res){
@@ -63,12 +55,12 @@ class PostView extends React.Component {
             if (err) {
                 return alert(err)
             }
-        }); */   
+        }); */
     };
 
     render() {
 
-        const {history,grapherPost} = this.props;
+        const {grapherPost} = this.props;
         let button = "";
         if (!grapherPost) {
             return <div>Loading....</div>
@@ -76,13 +68,13 @@ class PostView extends React.Component {
 
         /*Check if loggedin user is owner of post */
         if(Meteor.userId() === grapherPost.userId){
-            button = <button onClick={() => this.deletepost(grapherPost._id)}>Delete Post </button>
+            button = <button onClick={this.DeletePost}>Delete</button>
         }
-            return (
+        return (
             <div >
                 <div>
                     <p>Post id: {grapherPost._id} </p>
-                </div>   
+                </div>
                 <div>
                     <p> Post Description: {grapherPost.description} </p>
                 </div>
@@ -107,7 +99,7 @@ class PostView extends React.Component {
                     {/*Added comment functionality for post */}
 
                     <div  className="comment">
-                        <AutoForm onSubmit={this.commentSubmit.bind(this)} schema={CommentSchema}>
+                        <AutoForm onSubmit={this.commentSubmit} schema={CommentSchema}>
                             <AutoField name="comment"/>
                             <button type='submit' >Add Comment</button>
                         </AutoForm>
@@ -116,11 +108,11 @@ class PostView extends React.Component {
 
                     {/*End of comment form */}
                 </div>
-                { grapherPost.comments?  <SingleComment data={grapherPost.comments}/>:<div>No Comments</div>  } 
+                { grapherPost.comments?  <SingleComment data={grapherPost.comments}/>:<div>No Comments</div>  }
 
                 {/*Add post delete button*/}
                 {button}
-                <button onClick={() => {history.push("/posts/")}}> Back to post</button>
+                <button onClick={this.backToPost}>Back to posts</button>
             </div>
         )
     }
@@ -129,14 +121,16 @@ class PostView extends React.Component {
 const postGrapher = new ReactiveVar([]);
 export default withTracker(props => {
     let promise = new Promise((resolve, reject) => {
-    let posts =  PostServices.getPostById(props.match.params._id)
+        let posts =  PostServices.getPostById(props.match.params._id)
         resolve(posts)
+        reject();
     });
     promise.then((posts)=>{
         postGrapher.set(posts)
-    }) 
+    })
     return {
         grapherPost: postGrapher.get(),
         ...props
     };
 })(PostView);
+

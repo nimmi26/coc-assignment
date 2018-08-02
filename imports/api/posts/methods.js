@@ -4,7 +4,8 @@ import {Posts} from '/db';
 Meteor.methods({
     'post.create'(post) {
         post.userId = Meteor.userId();
-        return Posts.insert(post)
+        let userId = Posts.insert(post);
+        return userId;
     },
 
     'post.list' () {
@@ -48,7 +49,7 @@ Meteor.methods({
     //Method for incrementing view by one.
     'post.viewincrement' (_id){
         Posts.update(_id, {
-            $inc:{views: 1} 
+            $inc:{views: 1}
         });
     },
 

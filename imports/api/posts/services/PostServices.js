@@ -1,21 +1,25 @@
 import { Promise } from 'meteor/promise';
+import { Meteor } from 'meteor/meteor';
 class PostServices {
     static async createPost(posts){
+        Promise.reject();
         let postCreatePromise = new Promise((resolve, reject) => {
             Meteor.call('post.create',posts,(err,res)=>{
                 resolve(res)
-            }) 
+                reject();
+            })
         });
         let result = await postCreatePromise;
         return (result);
-        //Meteor.call('post.create', post)
     }
     //Service for getting all the post
     static async getPost() {
+        
         let postPromise = new Promise((resolve, reject) => {
             Meteor.call('postListUsingGrapher',(err,posts)=>{
                 resolve(posts)
-            }) 
+                reject();
+            })
         });
         let resultPostArry = await postPromise;
         return (resultPostArry);
@@ -27,6 +31,8 @@ class PostServices {
             Meteor.call('post.remove',postid,(err,res)=>{
                 if(res){
                     resolve(res)
+                }else{
+                    reject();
                 }
             })
         });
@@ -45,7 +51,8 @@ class PostServices {
         let postPromise = new Promise((resolve, reject) => {
             Meteor.call('getPost',postId,(err,posts)=>{
                 resolve(posts)
-            }) 
+                reject();
+            })
         });
         let resultPostArry = await postPromise;
         return (resultPostArry);
@@ -55,10 +62,11 @@ class PostServices {
         let postPromise = new Promise((resolve, reject) => {
             Meteor.call('post.edit',postId,post,(err,result)=>{
                 resolve(result)
-            }) 
+                reject();
+            })
         });
         let result = await postPromise;
-        return (result); 
+        return (result);
     }
 }
 export default PostServices;

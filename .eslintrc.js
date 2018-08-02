@@ -27,8 +27,10 @@ module.exports = {
             "ignoreRefs": false,
             "allowArrowFunctions": false,
             "allowFunctions": false,
-            "allowBind": false
+            "allowBind": false,
+           
         }],
+        "react/prop-types": [0],
         "max-len": [0, {code: 100}],
         "import/no-absolute-path": [0],
         "meteor/audit-argument-checks": [0],

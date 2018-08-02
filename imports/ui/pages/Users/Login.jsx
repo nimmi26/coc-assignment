@@ -13,16 +13,11 @@ export default class Login extends React.Component {
         let loginUser = new Promise((resolve,reject) => {
             let loginResult = UserServices.loginUser(email,password);
             resolve(loginResult);
+            reject();
         })
-        loginUser.then((loginResult)=>{
+        loginUser.then(()=>{
             this.props.history.push('/posts');
         })
-        /*Meteor.loginWithPassword(email, password, (err) => {
-            if (!err) {
-                return this.props.history.push('/posts');
-            }
-            alert(err.reason);
-        });*/
     };
 
     render() {

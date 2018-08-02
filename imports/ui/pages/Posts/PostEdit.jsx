@@ -6,47 +6,40 @@ export default class PostEdit extends React.Component {
     constructor() {
         super();
         this.state = {post: null};
+        this.backToPost = this.backToPost.bind(this);
     }
 
+    backToPost(){
+        return this.props.history.push('/posts');
+    }
     componentDidMount() {
-        /*Replacing this simple post get query with grapher query 
-        Meteor.call('post.get', this.props.match.params._id, (err, post) => {
-            this.setState({post});
-        });*/
-       /* Meteor.call('getPost', this.props.match.params._id, (err, post) => {
-            this.setState({post});
-        });*/
-
         //Get post using services
+       
         let promise = new Promise((resolve, reject) => {
-            //console.log(this.props.match.params._id)
             let post =  PostServices.getPostById(this.props.match.params._id)
             resolve(post)
+            reject();
         });
         promise.then((post)=>{
             this.setState({post});
-        }) 
+        })
     }
 
     submit = (post) => {
         let promise = new Promise((resolve, reject) => {
-            //console.log(this.props.match.params._id)
             let result =  PostServices.updatePostById(this.props.match.params._id,post)
-            resolve(result)
+            resolve(result);
+            reject();
         });
         promise.then((result)=>{
-            alert('Post modified!')
-        }) 
-        /*Meteor.call('post.edit', this.props.match.params._id, post, (err) => {
-            if (err) {
-                return alert(err.reason);
+            if(result){
+                alert('Post modified!')
             }
-            alert('Post modified!')
-        });*/
+            
+        })
     };
 
     render() {
-        const {history} = this.props;
         const {post} = this.state;
 
         if (!post) {
@@ -59,11 +52,11 @@ export default class PostEdit extends React.Component {
                     <AutoField name="title"/>
                     <LongTextField name="description"/>
 
-                {/*Added new field for category of post*/}
+                    {/*Added new field for category of post*/}
 
                     <SelectField name="category"/>
                     <button type='submit'>Edit post</button>
-                    <button onClick={() => history.push('/posts')}>Back to posts</button>
+                    <button onClick={this.backToPost}>Back to posts</button>
                 </AutoForm>
             </div>
         )

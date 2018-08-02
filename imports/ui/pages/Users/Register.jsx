@@ -11,15 +11,20 @@ export default class Register extends Component {
         let userCreatePromise = new Promise((resolve, reject) => {
             let userResult   = UserServices.createUser(data);
             resolve(userResult);
+            reject();
         });
         userCreatePromise.then((userResult)=>{
-            let loginUser = new Promise((resolve,reject) => {
-                let loginResult = UserServices.loginUser(data.email,data.password);
-                resolve(loginResult);
-            })
-            loginUser.then((loginResult)=>{
-                this.props.history.push('/posts');
-            })
+            if(userResult){
+                let loginUser = new Promise((resolve,reject) => {
+                    let loginResult = UserServices.loginUser(data.email,data.password);
+                    resolve(loginResult);
+                    reject();
+                })
+                loginUser.then(()=>{
+                    this.props.history.push('/posts');
+                })
+            }
+           
         })
     };
 

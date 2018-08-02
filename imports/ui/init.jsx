@@ -3,10 +3,9 @@ import ReactDOM from "react-dom";
 import {BrowserRouter} from 'react-router-dom';
 import Router from './Router';
 
-const App = props =>
-    <BrowserRouter>
-        <Router />
-    </BrowserRouter>;
+const App = () => <BrowserRouter>
+    <Router />
+</BrowserRouter>;
 
 ReactDOM.render(
     <App />,

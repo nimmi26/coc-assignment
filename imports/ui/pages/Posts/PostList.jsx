@@ -1,35 +1,35 @@
 import React from 'react';
 import TotalComments from './TotalComments.jsx';
 import PostServices from '/imports/api/posts/services/PostServices';
+import {Meteor} from 'meteor/meteor';
 export default class PostList extends React.Component {
     constructor() {
         super();
         this.state = {posts: null};
+        this.createPost = this.createPost.bind(this);
+        this.editPost = this.editPost.bind(this);
+        this.deletePost = this.deletePost.bind(this);
     }
 
-     //Call meteod for delete post
-    deletepost(postid){
-        /*Fisrt delte comment related to post if there any*/
+    editPost(event){
+        let postId = event.target.value;
+        return this.props.history.push("/posts/edit/" + postId);
+    }
+ 
+    createPost(){
+        return this.props.history.push('/posts/create');
+    }
+
+    deletePost(event){
+        let postId = event.target.value;
         let result = confirm("Want to delete?");
         if(result){
-            /* Remove comment delete functionality because start using autoremovel for deletion
-
-             Meteor.call('comments.delete',postid,(err,res)=>{})
-            /*Delete post after all comment deleted
-
-            */
-
-           /* Meteor.call('post.remove',postid,(err,res)=>{
-              if(res){
-                alert('Post Delete');
-                return this.props.history.push('/posts');
-              }
-            });*/
-
-            //Deleting post using service 
+            //Deleting post using service
+          
             let promise = new Promise((resolve, reject) => {
-                let res =  PostServices.deletePost(postid)
+                let res =  PostServices.deletePost(postId)
                 resolve(res)
+                reject();
             });
             promise.then((res)=>{
                 if(res){
@@ -39,24 +39,13 @@ export default class PostList extends React.Component {
             });
         }
     }
+
     componentDidMount() {
-       /*
-        Changing this code with grapher query
-
-
-        Meteor.call('post.list', (err, posts) => {
-            this.setState({posts});
-        }); */  
-
-        /*Meteor.call('postListUsingGrapher', (err, posts) => {
-            this.setState({posts});
-        }); */  
-
-
-        //Now getting post using services  
+        //Now getting post using services
         let promise = new Promise((resolve, reject) => {
             let posts =  PostServices.getPost()
             resolve(posts)
+            setTimeout(reject, 3000)
         });
         promise.then((posts)=>{
             this.setState({posts});
@@ -64,36 +53,24 @@ export default class PostList extends React.Component {
 
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps) {
         if(prevProps != this.props) {
-           /*
-            Changing this code with grapher query
-
-
-            Meteor.call('post.list', (err, posts) => {
-                this.setState({posts});
-            });*/
-
-
-            /*Meteor.call('postListUsingGrapher', (err, posts) => {
-                this.setState({posts});
-            });*/
-
-            //Now getting post using services  
+            //Now getting post using services
             let promise = new Promise((resolve, reject) => {
                 let posts =  PostServices.getPost()
                 resolve(posts)
+                setTimeout(reject, 3000);
             });
             promise.then((posts)=>{
                 this.setState({posts});
-            }) 
+            })
         }
     }
 
     render() {
 
         const {posts} = this.state;
-        const {history} = this.props;
+        
         let button = "";
         if (!posts) {
             return <div>Loading2....</div>
@@ -111,11 +88,16 @@ export default class PostList extends React.Component {
                                 </a>
                                 <TotalComments key={post._id} postid={post._id} totalviews={post.views} />
                                 
-                                {(Meteor.userId()===post.userId)?<div><button onClick={() =>{history.push("/posts/edit/" + post._id)}}>Edit</button><button onClick={() => this.deletepost(post._id)}>Delete</button></div>:""}
+                                {(Meteor.userId()===post.userId)?
+                                    <div>
+                                        <button onClick={this.editPost} value={post._id}>Edit</button>
+                                        <button onClick={this.deletePost} value={post._id} >Delete</button>
+                                    </div>:""
+                                }
                             </div>
                         )
                     })}
-                <button onClick={() => history.push('/posts/create')}>Create a new post</button>
+                <button onClick={this.createPost} >Create a new post</button>
             </div>
         )
     }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { AutoForm, AutoField } from 'uniforms-unstyled';
 import SimpleSchema from 'simpl-schema';
-
+import {Meteor } from 'meteor/meteor';
 export default class Home extends React.Component {
     constructor() {
         super();
@@ -11,7 +11,7 @@ export default class Home extends React.Component {
     }
     getRandomNumber = () =>  {
         Meteor.call('find.random_number',(err, number) => {
-           this.setState({number})
+            this.setState({number})
         });
     };
 
@@ -20,13 +20,12 @@ export default class Home extends React.Component {
             if(err) {
                 return alert(err.details);
             }
-            console.log(result);
+            return alert(result);
         });
     };
 
     render() {
         const {number} = this.state;
-
         return (
             <div className="home">
                 <button onClick={this.getRandomNumber}>Get Random number</button>
